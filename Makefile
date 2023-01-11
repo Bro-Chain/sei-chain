@@ -12,7 +12,7 @@ NITRO_LIB_PATH := $(PROJECT_HOME)/x/nitro/
 # process build tags
 
 LEDGER_ENABLED ?= true
-build_tags = netgo
+build_tags = netgo pebbledb
 ifeq ($(LEDGER_ENABLED),true)
 	ifeq ($(OS),Windows_NT)
 		GCCEXE = $(shell where gcc.exe 2> NUL)
@@ -50,7 +50,9 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=sei \
 			-X github.com/cosmos/cosmos-sdk/version.ServerName=seid \
 			-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 			-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
-			-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)"
+			-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
+			-X github.com/cosmos/cosmos-sdk/types.DBBackend=pebbledb \
+			-X github.com/tendermint/tm-db.ForceSync=1
 
 ifeq ($(LINK_STATICALLY),true)
 	ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
@@ -60,6 +62,8 @@ ldflags := $(strip $(ldflags))
 
 # BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)' -race
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
+
+TENDERMINT_BUILD_OPTIONS=pebbledb
 
 #### Command List ####
 
